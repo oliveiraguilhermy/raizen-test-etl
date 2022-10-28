@@ -1,0 +1,31 @@
+version: "3.7"
+services:  
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+    ports:
+      - "5432:5432"
+
+  webserver:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+    volumes:
+      - C:\airflow\dags:/opt/airflow/dags
+  config:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    restart: 'no'
+    depends_on:
+      - postgres
+    entrypoint: /opt/airflowinit/start.sh
